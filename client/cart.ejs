@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Cart</title>
+  <link rel="stylesheet" type="text/css" href="styles/global.css">
+  <link rel="stylesheet" type="text/css" href="styles/cart.css">
+  <script src="https://kit.fontawesome.com/9b7f16bc1d.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <%- include('include/navbar') %>
+
+    <main>
+
+      <div id="cart-heading">
+        <h1 style="margin-left: 5px;">Items in your cart:</h1>
+      </div>
+      <div id="parent">
+
+        <div id="list">
+          <% let totalCost=0; %> <!-- Initialize total cost variable -->
+
+            <% if (cart.items.length> 0) { %>
+              <% for (let i of cart.items) { %>
+                <div class="seperation-line"></div>
+                <div class="product">
+                  <div class="product-image">
+                    <img src="<%= i.image %>" alt="Product Image">
+                    <div class="product-description">
+                      <h3 class="product-name item-heading">
+                        <%= i.productName %>
+                      </h3>
+                      <div class="product-seller">Seller: Onkit</div>
+                      <div class="product-stock">In Stock</div>
+                      <div class="remove">
+                        <a href="/cart/remove/<%= i._id %>" class="remove-item">
+                          <i class="fa-solid fa-trash"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="product-price">
+                    <h3>Price</h3>
+                    <div class="price">
+                      <%= i.price %>
+                    </div>
+                  </div>
+
+                  <div class="product-quantity">
+                    <h3> Quantity</h3>
+                    <div class="quantity">
+                      <button class="btn-arrow decre" onclick="updateQuantity('<%= i._id %>', 'decrease')">
+                        <i class="fa-solid fa-minus minus-icon"></i>
+                      </button>
+                      <span id="quantity-<%= i._id %>">
+                        <%= i.quantity %>
+                      </span>
+                      <button class="btn-arrow incre" onclick="updateQuantity('<%= i._id %>', 'increase')">
+                        <i class="fa-solid fa-plus plus-icon"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="product-total">
+                    <h3>Total</h3>
+                    <div class="total">
+                      <span id="total-<%= i._id %>">
+                        <%= i.price * i.quantity %>
+                      </span> Rs.
+                    </div>
+                  </div>
+                </div>
+                <% totalCost +=i.price * i.quantity; %> <!-- Accumulate total cost -->
+                  <% } %>
+                    <% } else { %>
+                      <p>Your cart is empty.</p>
+                      <% } %>
+        </div>
+
+        <div id="summary">
+          <label for="coupon" id="coupon-label">ENTER COUPON CODE</label><br>
+          <div id="coupon">
+            <input type="text" name="coupon" id="coupon-form" placeholder="Coupon Code">
+            <button type="button" id="coupon-submit" onclick="applyCoupon()">Apply</button>
+          </div>
+
+          <div class="calculation">
+            <div class="reason" style="margin-top: 20px;">Sub-total: </div>
+            <div class="reason" style="margin-top: 20px;">
+              <span id="subcost">
+                <%= totalCost %>
+              </span> Rs.
+            </div>
+          </div>
+
+          <div class="calculation">
+            <div class="reason">Delivery: </div>
+            <div class="reason"> 00.00 Rs. </div>
+          </div>
+
+          <div class="calculation">
+            <div class="reason">Discount: </div>
+            <div class="reason" id="discount"> 00.00 Rs. </div>
+          </div>
+
+          <div id="line"></div>
+
+          <div class="calculation">
+            <div id="total-cost" class="total-final">Total: </div>
+            <div class="total-final">
+              <span id="cost">
+                <%= totalCost %>
+              </span> Rs.
+            </div>
+          </div>
+
+          <button type="submit" id="order" onclick="location.href='checkout'">
+            <i class="fa-solid fa-lock" style="padding-right: 10px; color: white;"></i>Checkout
+          </button>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <%- include('include/footer') %>
+
+      <script type="text/javascript" src="javascript/cart.js"></script>
+      <script type="text/javascript" src="javascript/navbar.js"></script>
+
+      <script>
+        // Update quantity function
+        function updateQuantity(productId, action) {
+          axios.post('/api/cart/update', { productId, action })
+            .then(response => {
+              // Update the UI with new quantity and total
+              const quantitySpan = document.getElementById(`quantity-${productId}`);
+              const totalSpan = document.getElementById(`total-${productId}`);
+              const newQuantity = parseInt(quantitySpan.textContent) + (action === 'increase' ? 1 : -1);
+              quantitySpan.textContent = newQuantity;
+              totalSpan.textContent = (newQuantity * response.data.price) + ' Rs.';
+
+              // Update the total cost on the page
+              updateTotalCost(response.data.totalCost);
+            })
+            .catch(error => {
+              console.error('Error updating quantity:', error);
+            });
+        }
+
+        // Apply coupon function
+        function applyCoupon() {
+          const couponCode = document.getElementById('coupon-form').value;
+          axios.post('/api/cart/applyCoupon', { couponCode })
+            .then(response => {
+              if (response.data.success) {
+                // Apply discount and update total
+                document.getElementById('discount').textContent = response.data.discount + ' Rs.';
+                updateTotalCost(response.data.newTotal);
+              } else {
+                alert('Invalid coupon code');
+              }
+            })
+            .catch(error => {
+              console.error('Error applying coupon:', error);
+            });
+        }
+
+        // Update the total cost
+        function updateTotalCost(newTotal) {
+          document.getElementById('cost').textContent = newTotal + ' Rs.';
+          document.getElementById('subcost').textContent = newTotal + ' Rs.';
+        }
+      </script>
+
+</body>
+
+</html>

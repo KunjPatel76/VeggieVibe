@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeggieVibe</title>
+    <link rel="icon" href="images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="styles/global.css">
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    <script src="https://kit.fontawesome.com/9b7f16bc1d.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- back-ground Animation -->
+    <div class="back-animation">
+        <img src="images/leaf-min.png" alt="leaf" height="195px" width="195px">
+    </div>
+    <div class="back-animation"></div>
+    <main>
+
+        <%- include('include/navbar') %>
+
+            <section id="header">
+                <div id="header-text">
+                    <h1>Fresh & Healthy Food Delivered To Your Door</h1>
+                    <h3>We bring farm-fresh produce directly to your doorstep with a focus on quality, convenience, and
+                        affordability. Explore a range of organic and healthy food options.</h3>
+                    <button onclick="location.href='#search'">Shop Now</button>
+                </div>
+                <div id="header-img">
+                    <img src="images/header-img.png" height="240px" width="240px">
+                </div>
+            </section>
+
+            <section id="categories">
+                <div class="category">
+                    <img src="images/beverages.png" alt="" height="140px" width="140px">
+                    <p>Beverages</p>
+                </div>
+                <div class="category">
+                    <img src="images/fruits.png" alt="" height="140px" width="140px">
+                    <p>Fruits</p>
+                </div>
+                <div class="category">
+                    <img src="images/dairy.png" alt="" height="140px" width="140px">
+                    <p>Dairy</p>
+                </div>
+                <div class="category">
+                    <img src="images/vegetables.png" alt="" height="140px" width="140px">
+                    <p>Vegetables</p>
+                </div>
+                <div class="category">
+                    <img src="images/oils_vinegars.png" alt="" height="140px" width="140px">
+                    <p>Oils & Vinegars</p>
+                </div>
+                <div class="category">
+                    <img src="images/nuts_seeds.png" alt="" height="140px" width="140px">
+                    <p>Nuts & Seeds</p>
+                </div>
+            </section>
+
+            <section id="search">
+                <div id="search-main">
+                    <div id="search-bar">
+                        <div id="location">
+                            <i class="fa-solid fa-location-dot"></i><span id="city">Vadodara</span>
+                        </div>
+                        <div id="search-side">
+                            <span id="drop-icon"><button class="btn-arrow"><i
+                                        class="fa-solid fa-caret-down"></i></button></span>
+                            <span id="search-divider">|</span>
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search for food items...">
+                        </div>
+                    </div>
+                    <div id="filter">
+                        <div class="filter-box"><span>Filter</span><i class="fa-solid fa-angle-down"></i></div>
+                        <div class="filter-box"><span>Ratings</span><i class="fa-solid fa-angle-down"></i></div>
+                        <div class="filter-box"><span>Category</span><i class="fa-solid fa-angle-down"></i></div>
+                        <div class="filter-box"><span>Price</span><i class="fa-solid fa-angle-down"></i></div>
+                    </div>
+                </div>
+                <div id="cards">
+                    <% for(i of products){ %>
+                        <div class="card">
+                            <img src="<%= i.image %>">
+                            <div class="card-body">
+                                <div class="name">
+                                    <%= i.name %>
+                                </div>
+                                <div class="description">
+                                    <p>
+                                        <%= i.description %>
+                                    </p>
+                                </div>
+                                <div class="rating">5.0 <i class="fa-solid fa-star"></i></div>
+                                <div class="price">Rs. <%= i.price %> / KG</div>
+                                <div onclick="addToCart('<%= i.name %>')" class="add2cart" id="cart-button">Add to Cart
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                </div>
+            </section>
+
+            <section id="provide">
+                <h1>What We Offer?</h1>
+                <div id="provide-cards">
+                    <div class="provide-card cardcolor">
+                        <div class="provide-logo"><i class="fa-solid fa-person-walking-luggage logowhite i"></i></div>
+                        <h3>For Sellers</h3>
+                        <h4 class="logowhite i"><i class="fa-solid fa-circle logowhite i sm"></i> Increased Reach &
+                            Sales</h4>
+                        <h4 class="logowhite i"><i class="fa-solid fa-circle logowhite i sm"></i> More Visibility for
+                            Products</h4>
+                        <h4 class="logowhite i"><i class="fa-solid fa-circle logowhite i sm"></i> Lower Overhead Costs
+                        </h4>
+                    </div>
+                    <div class="provide-card">
+                        <div class="provide-logo"><i class="fa-solid fa-person-military-pointing i"></i></div>
+                        <h3>For Customers</h3>
+                        <h4><i class="fa-solid fa-circle sm"></i> Competitive Prices on Quality Products</h4>
+                        <h4><i class="fa-solid fa-circle sm"></i> Convenient Home Delivery</h4>
+                        <h4><i class="fa-solid fa-circle sm"></i> Fresh & Graded Produce</h4>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about">
+                <h1>About Us</h1>
+                <div id="about-body">
+                    <div id="about-img">
+                        <img src="images/panda-min.png" alt="selling" height="395px" width="395px">
+                    </div>
+                    <div id="about-text" align="justify">
+                        <h3>We are a growing platform bringing the best of local produce to your doorstep. Our
+                            marketplace hosts a range of fresh and organic items for customers looking for quality and
+                            convenience.</h3>
+                        <h3>By supporting local farmers and vendors, we not only ensure fresh products but also help
+                            boost local economies. Join us in making healthy, farm-to-table food accessible to everyone!
+                        </h3>
+                    </div>
+                </div>
+            </section>
+
+            <%- include('include/footer') %>
+
+    </main>
+    <script type="text/javascript" src="javascript/main.js"></script>
+    <script type="text/javascript" src="javascript/navbar.js"></script>
+</body>
+
+</html>
